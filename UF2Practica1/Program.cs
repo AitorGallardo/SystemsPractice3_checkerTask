@@ -26,7 +26,7 @@ namespace UF2Practica1
 		public static void Main(string[] args)
 		{
 			var clock = new Stopwatch();
-			var threads = new List<Task>();
+			var tasks = new List<Task>();
 			//Recordeu-vos indicar la ruta del fitxer
 			string filePath="";
 
@@ -34,7 +34,8 @@ namespace UF2Practica1
 			{
 				using (StreamReader sr = new StreamReader(filePath))
 				{
-    					sr.ReadLine();
+    					//Llegim la primera línia que conté les capçaleres
+                        sr.ReadLine();
     					while (sr.Peek() != -1)
     					{
        						string line = sr.ReadLine();
@@ -61,9 +62,10 @@ namespace UF2Practica1
 
 
 
-			// Procediment per esperar que acabin tots els threads abans d'acabar
+			// Intrucció per indicar que cal esperar que acabin tots les tasks abans d'acabar
 			
-			Task.WaitAll(task.ToArray());
+			
+
 
 			// Parem el rellotge i mostrem el temps que triga
 			clock.Stop();
@@ -95,19 +97,12 @@ namespace UF2Practica1
 		private void ProcesarCompra(Client client)
 		{
 
-			Console.WriteLine("La caixera " + this.idCaixera + " comença amb el client " + client.nom + " que té " + client.carretCompra + " productes");
-
-			for (int i = 0; i < client.carretCompra; i++)
-			{
-				this.ProcessaProducte();
-
-			}
-
-			Console.WriteLine(">>>>>> La caixera " + this.idCaixera + " ha acabat amb el client " + client.nom);
+			
 		}
 
 
-		private void ProcessaProducte()
+		// Processar producte se simula amb un retard de 1s
+        private void ProcessaProducte()
 		{
 			Thread.Sleep(TimeSpan.FromSeconds(1));
 		}
