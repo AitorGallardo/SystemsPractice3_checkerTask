@@ -17,6 +17,7 @@ Makefile.in
 *.userprefs
 *.usertasks
 config.log
+db.lock
 config.make
 config.status
 aclocal.m4
