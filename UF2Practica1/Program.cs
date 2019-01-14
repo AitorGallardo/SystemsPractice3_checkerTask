@@ -25,26 +25,27 @@ namespace UF2Practica1
 
 		public static void Main(string[] args)
 		{
-			var clock = new Stopwatch();
+            var clock = new Stopwatch();
 			var tasks = new List<Task>();
-			//Recordeu-vos indicar la ruta del fitxer
-			string filePath="";
+            var caixeres = 3;
 
-			try
+            try
 			{
-				using (StreamReader sr = new StreamReader(filePath))
+				using (StreamReader sr = new StreamReader("clients.csv"))
 				{
-    					//Llegim la primera línia que conté les capçaleres
-                        sr.ReadLine();
-    					while (sr.Peek() != -1)
+
+                    //Llegim la primera línia que conté les capçaleres
+                    var header = sr.ReadLine();
+                    while (sr.Peek() != -1)
     					{
+                        
        						string line = sr.ReadLine();
-        					var values = line.Split(';');
+        					var values = line.Split(',');
                     				var tmp = new Client() { nom = values[0], carretCompra = Int32.Parse(values[1]) };
                     				cua.Enqueue(tmp);
 
-       
-    					}
+
+                    }
 				}
 			}
 			catch (Exception)
@@ -54,23 +55,20 @@ namespace UF2Practica1
 				Environment.Exit(0);
 			}
 
-			clock.Start();
+            clock.Start();
 
+            for (int i = 1; i <= caixeres; i++)
+            {
+                var caixera = new Caixera() { idCaixera = i };
+                tasks.Add(Task.Run(() => caixera.ProcessarCua(cua)));
+            }
+            Task.WaitAll(tasks.ToArray());
 
-			// Instanciar les caixeres i afegir el task creat a la llista de tasks
+            Console.WriteLine($"** Final Processant cues **");
 
-
-
-
-			// Intrucció per indicar que cal esperar que acabin tots les tasks abans d'acabar
-			
-			
-
-
-			// Parem el rellotge i mostrem el temps que triga
-			clock.Stop();
+            clock.Stop();
 			double temps = clock.ElapsedMilliseconds / 1000;
-			Console.Clear();
+			// Console.Clear();
 			Console.WriteLine("Temps total Task: " + temps + " segons");
 			Console.ReadKey();
 		}
@@ -84,27 +82,36 @@ namespace UF2Practica1
 			set;
 		}
 
-		public void ProcessarCua()
+
+        public void ProcessarCua(ConcurrentQueue<Client> cua)
 		{
-			// Llegirem la cua extreient l'element
-			// cridem al mètode ProcesarCompra passant-li el client
-
-
-
-		}
+            Client actualClient;
+            bool dequeued = cua.TryDequeue(out actualClient);
+            while (dequeued)
+            {
+                ProcesarCompra(actualClient);
+                dequeued = cua.TryDequeue(out actualClient);
+            }
+              
+        }
 
 
 		private void ProcesarCompra(Client client)
 		{
+            Console.WriteLine("La caixera "+idCaixera+" comenca amb el client "+client.nom+" que te "+client.carretCompra+" productes");
+            for (int i = 0; i <= client.carretCompra; i++)
+            {
+                ProcessaProducte();
+            }
+            Console.WriteLine(">>>> La caixera " + idCaixera + " ha acabat amb el client " + client.nom);
+        }
 
-			
-		}
 
 
-		// Processar producte se simula amb un retard de 1s
         private void ProcessaProducte()
 		{
-			Thread.Sleep(TimeSpan.FromSeconds(1));
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+
 		}
 	}
 
