@@ -27,7 +27,7 @@ namespace UF2Practica1
 		{
             var clock = new Stopwatch();
 			var tasks = new List<Task>();
-            var caixeres = 3;
+            var caixeres = 3; //No entenc això, ja tens una constant definint el valor
 
             try
 			{
@@ -87,6 +87,8 @@ namespace UF2Practica1
 		{
             Client actualClient;
             bool dequeued = cua.TryDequeue(out actualClient);
+	//Qüestió de gustos, però prefereixo controlar la cua amb cua.Count i usar el dequed per si hi ha algun problema
+	//de lectura, però tampoc està malament la teva solució
             while (dequeued)
             {
                 ProcesarCompra(actualClient);
